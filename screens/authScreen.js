@@ -1,11 +1,12 @@
 import React,{useState,useEffect} from 'react'
-import { StyleSheet, Text, View,TextInput,Button,TouchableWithoutFeedback,Keyboard, Alert } from 'react-native';
+import { StyleSheet, Text, View,Button,TouchableWithoutFeedback,Keyboard, Alert,TouchableHighlight,Image,TouchableOpacity } from 'react-native';
 import {Ionicons} from '@expo/vector-icons'
 import * as Yup from 'yup'
 import {Formik} from 'formik'
 import Checkbox from 'expo-checkbox'
 import {useDispatch} from 'react-redux'
 import * as authActions from '../store/AuthActions.js' 
+import {TextInput} from 'react-native-paper'
 const authScreen = (props) => {
     const [log,setLog]=useState(false)
     const [checked,setChecked]=useState(false)
@@ -68,6 +69,7 @@ const authScreen = (props) => {
         formhandler(values)
         Keyboard.dismiss
         }}
+        validateOnChange={true}
         >
       {(prop)=>(
         <View style={styles.cont}>
@@ -76,21 +78,32 @@ const authScreen = (props) => {
         </View>
         <View style={{flexDirection:'row'}}>
         <TextInput
+        mode="flat"
+        underlineColor="white"
          value={prop.values.email}
          onChangeText={prop.handleChange('email')}
          style={styles.inpe}
          returnKeyType="done"
          keyboardType='email-address'
          autoCompleteType='email'
+         underlineColorAndroid="transparent"
+         right={<TextInput.Icon
+           name={()=>{return(!prop.errors.email && prop.values.email.length>0 && <Ionicons name="checkmark-sharp" size={24} color="blue" />)}}
+         
+         />}
         />
-        {!prop.errors.email && prop.values.email.length>0 && <Ionicons name="checkmark-circle-outline" size={30} color="green" />}
         </View>
         <Text style={{color:'red'}}>{prop.touched.email && prop.errors.email}</Text>
         <View style={{marginRight:220}}>
         <Text style={styles.txt}>Password</Text>
         </View>
-        <View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center',marginRight:10}} >
+        <View style={{
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center'}} >
         <TextInput
+        mode='flat'
+        underlineColor="white"
         value={prop.values.password}
         onChangeText={prop.handleChange('password')}
         style={styles.inpp}
@@ -98,27 +111,35 @@ const authScreen = (props) => {
         returnKeyType="done"
         keyboardType='default'
         autoCompleteType='password'
+        underlineColorAndroid="transparent"
+        right={<TextInput.Icon
+          name={()=>{return( pass ?<Ionicons name='eye-outline' size={24} />:(<Ionicons name='eye-off-outline' size={24} />))}}
+          onPress={()=>{setPass(!pass)}}
+        />}
         />
-        <TouchableWithoutFeedback  onPress={()=>{setPass(!pass)}}>
-          {pass ?<Ionicons name='eye-outline' size={24} />:(<Ionicons name='eye-off-outline' size={24} />)}
-        </TouchableWithoutFeedback>
+        
         </View>
         <Text style={{color:'red'}}>{prop.touched.password && prop.errors.password}</Text>
         <View style={{justifyContent:'space-between',flexDirection:'row',alignItems:'center',paddingHorizontal:20}}>
         <Checkbox
         value={checked}
         onValueChange={setChecked}
-        color={checked ?'#5349d6': undefined}
+        color={checked ?'#0062FF': undefined}
         />
-         <Text>I agree to the <Text style={{color:'blue',textDecorationLine:'underline'}}>Terms & Conditions</Text> and <Text style={{color:'blue',textDecorationLine:'underline'}}>Privacy Policy</Text></Text>
+         <Text>I agree to the <Text style={{color:'#0062FF',textDecorationLine:'underline'}}>Terms & Conditions</Text> and <Text style={{color:'#0062FF',textDecorationLine:'underline'}}>Privacy Policy</Text></Text>
         </View>
         <View style={styles.btn}>
-        {log ?(<Button  color='#5349d6'  title ='Log In' onPress={prop.handleSubmit} disabled={!checked}/> ):(<Button  color='#5349d6'  title ='Create Account' onPress={prop.handleSubmit} disabled={!checked}/>)}
+        {log ?(<View style={styles.btk}><Button   color='#0062FF'   title ='Log In' onPress={prop.handleSubmit} disabled={!checked}/></View> ):(<View style={styles.btk}><Button  color='#0062FF'  title ='Create Account' onPress={prop.handleSubmit} disabled={!checked}/></View>)}
         </View>
-       {!log && <Button  color='#00BFFF'  title ='Sign Up With Google' />}
+       {!log && <TouchableOpacity style={{borderWidth:1,borderColor:"#0062FF",borderRadius:10,flexDirection:'row',width:290,
+     height:47,justifyContent:'space-evenly',alignItems:'center'}}>
+          <Image style={{width:"7%",height:20}} source={{uri:'https://pics.freeicons.io/uploads/icons/png/2659939281579738432-512.png'}}/>
+          <Text>Sign Up With Google</Text>
+         </TouchableOpacity>
+         }
        { !log && <View style={{flexDirection:'row',paddingTop:40,alignItems:'center',width:190,justifyContent:'flex-end'}}>
             <Text>Already have an account?  </Text>
-            <Button title='Log In' color='blue' onPress={()=>{setLog(!log)}}/>
+            <TouchableOpacity onPress={()=>{setLog(!log)}}><Text style={{textDecorationLine:'underline',color:'#0062FF'}}>Log In</Text></TouchableOpacity>
         </View>}
         </View>
       )}
@@ -142,23 +163,26 @@ const styles = StyleSheet.create({
      alignItems:'center'
     },
     inpp:{
-     marginLeft:20,
-     borderColor:'#ddd',
+    
+     borderColor:'white',
      borderWidth:1,
-     borderRadius:5,
+     borderRadius:10,
+     
+     backgroundColor:'#F0F8FF',
      padding:4,
      width:290,
-     maxHeight:70,
+     height:47,
     
     },
     inpe:{
-     
-      borderColor:'#ddd',
+       
+      borderColor:'white',
       borderWidth:1,
-      borderRadius:5,
+      borderRadius:10,
       padding:4,
       width:290,
-      maxHeight:70,
+      height:47,
+      backgroundColor:'#F0F8FF'
      
      },
     viw:{
@@ -178,7 +202,12 @@ const styles = StyleSheet.create({
         padding:20,
         justifyContent:'space-between',
         alignItems:'center',
+    },
+    btk:{
+  
+      borderRadius:10,
+      width:290,
+     height:47
     }
-
   });
   
