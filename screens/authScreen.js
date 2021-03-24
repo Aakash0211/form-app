@@ -1,12 +1,12 @@
 import React,{useState,useEffect} from 'react'
-import { StyleSheet, Text, View,Button,TouchableWithoutFeedback,Keyboard, Alert,TouchableHighlight,Image,TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View,Button,TouchableWithoutFeedback,Keyboard, Alert,TouchableHighlight,Image,TouchableOpacity,KeyboardAvoidingView } from 'react-native';
 import {Ionicons} from '@expo/vector-icons'
 import * as Yup from 'yup'
 import {Formik} from 'formik'
-import Checkbox from 'expo-checkbox'
+
 import {useDispatch} from 'react-redux'
 import * as authActions from '../store/AuthActions.js' 
-import {TextInput} from 'react-native-paper'
+import {TextInput,Checkbox} from 'react-native-paper'
 const authScreen = (props) => {
     const [log,setLog]=useState(false)
     const [checked,setChecked]=useState(false)
@@ -56,10 +56,11 @@ const authScreen = (props) => {
   
 
     return (
+      
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.container}>
-    <View style={{marginRight:130}}>
-      {log ?(<Text  style={{paddingBottom:60,fontSize:22,fontWeight:'bold'}}>Log In</Text>):(<Text style={{alignItems:'flex-start',paddingBottom:60,fontSize:27,fontWeight:'bold'}}>Create Account</Text>)}
+    <View style={{marginRight:195}}>
+      {log ?(<Text  style={{paddingBottom:45,fontSize:27,fontWeight:'bold',marginRight:30}}>Log In</Text>):(<View style={{paddingBottom:42}}><Text style={{alignItems:'flex-start',fontSize:27,fontWeight:'bold'}}>Create </Text><Text style={{fontSize:27,fontWeight:'bold'}}>Account</Text></View>)}
       </View>
       <Formik
        initialValues={{email:'',password:''}}
@@ -73,7 +74,7 @@ const authScreen = (props) => {
         >
       {(prop)=>(
         <View style={styles.cont}>
-        <View style={{marginRight:220}}>
+        <View style={{marginRight:210}}>
         <Text style={styles.txt}>Your Email</Text>
         </View>
         <View style={{flexDirection:'row'}}>
@@ -83,18 +84,17 @@ const authScreen = (props) => {
          value={prop.values.email}
          onChangeText={prop.handleChange('email')}
          style={styles.inpe}
-         returnKeyType="done"
+         returnKeyType='done'
          keyboardType='email-address'
          autoCompleteType='email'
          underlineColorAndroid="transparent"
          right={<TextInput.Icon
-           name={()=>{return(!prop.errors.email && prop.values.email.length>0 && <Ionicons name="checkmark-sharp" size={24} color="blue" />)}}
-         
+           name={()=>{return(!prop.errors.email && prop.values.email.length>0 && <Ionicons name="checkmark-sharp" size={20} color="blue" />)}}
          />}
         />
         </View>
         <Text style={{color:'red'}}>{prop.touched.email && prop.errors.email}</Text>
-        <View style={{marginRight:220}}>
+        <View style={{marginRight:210}}>
         <Text style={styles.txt}>Password</Text>
         </View>
         <View style={{
@@ -119,33 +119,38 @@ const authScreen = (props) => {
         />
         
         </View>
-        <Text style={{color:'red'}}>{prop.touched.password && prop.errors.password}</Text>
-        <View style={{justifyContent:'space-between',flexDirection:'row',alignItems:'center',paddingHorizontal:20}}>
+        <Text style={{color:'red',marginLeft:20}}>{prop.touched.password && prop.errors.password}</Text>
+        <View style={{justifyContent:'space-between',flexDirection:'row',alignItems:'center',paddingHorizontal:35,paddingTop:15}}>
         <Checkbox
-        value={checked}
-        onValueChange={setChecked}
+        status={checked?'checked':'unchecked'}
+        onPress={()=>{setChecked(!checked)}}
         color={checked ?'#0062FF': undefined}
+        
         />
          <Text>I agree to the <Text style={{color:'#0062FF',textDecorationLine:'underline'}}>Terms & Conditions</Text> and <Text style={{color:'#0062FF',textDecorationLine:'underline'}}>Privacy Policy</Text></Text>
         </View>
         <View style={styles.btn}>
-        {log ?(<View style={styles.btk}><Button   color='#0062FF'   title ='Log In' onPress={prop.handleSubmit} disabled={!checked}/></View> ):(<View style={styles.btk}><Button  color='#0062FF'  title ='Create Account' onPress={prop.handleSubmit} disabled={!checked}/></View>)}
+        {log ?(<View style={styles.btk}><Button   color='#0066ff'   title ='Log In' onPress={prop.handleSubmit} disabled={!checked}/></View> ):(<View style={styles.btk}><Button  color='#0066ff'  title ='Create Account' onPress={prop.handleSubmit} disabled={!checked}/></View>)}
         </View>
-       {!log && <TouchableOpacity style={{borderWidth:1,borderColor:"#0062FF",borderRadius:10,flexDirection:'row',width:290,
+       {!log && <TouchableOpacity style={{borderWidth:1,borderColor:"#0062FF",borderRadius:10,flexDirection:'row',width:300,
      height:47,justifyContent:'space-evenly',alignItems:'center'}}>
           <Image style={{width:"7%",height:20}} source={{uri:'https://pics.freeicons.io/uploads/icons/png/2659939281579738432-512.png'}}/>
           <Text>Sign Up With Google</Text>
          </TouchableOpacity>
          }
-       { !log && <View style={{flexDirection:'row',paddingTop:40,alignItems:'center',width:190,justifyContent:'flex-end'}}>
+       { log ?(<View style={{flexDirection:'row',paddingTop:40,alignItems:'center',width:190,justifyContent:'flex-end'}}>
+            <Text>Didn't have an account </Text>
+            <TouchableOpacity onPress={()=>{setLog(!log)}}><Text style={{textDecorationLine:'underline',color:'#0062FF'}}>Sign Up</Text></TouchableOpacity>
+        </View>): (<View style={{flexDirection:'row',paddingTop:40,alignItems:'center',width:190,justifyContent:'flex-end'}}>
             <Text>Already have an account?  </Text>
-            <TouchableOpacity onPress={()=>{setLog(!log)}}><Text style={{textDecorationLine:'underline',color:'#0062FF'}}>Log In</Text></TouchableOpacity>
-        </View>}
+            <TouchableOpacity   onPress={()=>{setLog(!log)}}><Text style={{textDecorationLine:'underline',color:'#0062FF'}}>Log In</Text></TouchableOpacity>
+        </View>)}
         </View>
       )}
       </Formik>
     </View>
     </TouchableWithoutFeedback>
+
     )
 }
 
@@ -156,7 +161,8 @@ const styles = StyleSheet.create({
     container: {
      flex:1,
      justifyContent:'center',
-     alignItems:'center'
+     alignItems:'center',
+     marginTop:108
     },
     cont:{
         justifyContent:'center',
@@ -170,7 +176,7 @@ const styles = StyleSheet.create({
      
      backgroundColor:'#F0F8FF',
      padding:4,
-     width:290,
+     width:300,
      height:47,
     
     },
@@ -180,7 +186,7 @@ const styles = StyleSheet.create({
       borderWidth:1,
       borderRadius:10,
       padding:4,
-      width:290,
+      width:300,
       height:47,
       backgroundColor:'#F0F8FF'
      
@@ -194,7 +200,8 @@ const styles = StyleSheet.create({
      
     },
     btn:{
-        padding:20,
+        borderRadius:15,
+        padding:40,
         justifyContent:'space-between',
         alignItems:'center',
     },
@@ -206,7 +213,7 @@ const styles = StyleSheet.create({
     btk:{
   
       borderRadius:10,
-      width:290,
+      width:300,
      height:47
     }
   });
